@@ -1,0 +1,10 @@
+# About
+
+This is the first draft of a munin [1] plugin for glusterfs. [2]
+
+
+
+
+
+[1]: http://munin-monitoring.org/
+[2]: http://www.gluster.org/

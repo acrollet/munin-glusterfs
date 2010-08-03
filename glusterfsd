@@ -1,0 +1,55 @@
+#!/bin/sh
+#
+# Plugin created by Adrian Rollett, based on nfsd plugin
+#%# family=auto
+#%# capabilities=autoconf
+
+DAEMON='glusterfsd'
+CLIENTFS='/gluster/gluster'
+LOGFILE='/var/log/glusterfs/glusterfsd.vol.log'
+
+proc="STAT STATFS SETXATTR GETXATTR OPENDIR LOOKUP READDIR INODELK XATTROP MKNOD"
+
+if [ "$1" = "autoconf" ]; then
+	if ps -C "$DAEMON" >/dev/null; then
+		echo yes
+		exit 0
+	else
+		echo "no (no $DAEMON)"
+		exit 1
+	fi
+fi
+
+if [ "$1" = "config" ]; then
+
+	echo 'graph_title GlusterFS Server'
+	echo 'graph_args --base 1000 -l 0'
+	echo 'graph_vlabel requests / ${graph_period}'
+	echo 'graph_total total'
+	echo 'graph_category GlusterFS'
+	for a in $proc ; do echo "$a.label $a" ; echo "$a.type DERIVE"; echo "$a.min 0"; done
+	exit 0
+fi
+
+i=4;
+
+if ps -C "$DAEMON" >/dev/null;
+then 
+        TMPFILE=`tempfile`
+	# The io-debug xlator requires us to set a file xattr in order to dump stats.
+	setfattr -n trusted.io-stats-dump $CLIENTFS
+	# Now we immediately get the last 200 lines of the server's logfile. This should
+	# almost certainly get the stats we need.
+	tail -200 $LOGFILE > $TMPFILE
+	FIRSTLINE=`sed -n '/=== Cumulative stats ===/ =' $TMPFILE|tail -1`
+	for a in $proc; do
+		echo -n "$a.value "
+		tail -n +$FIRSTLINE $TMPFILE | grep "${a} : [0-9]\+$" | head -1 | awk '{print $NF}'
+		# i=$(expr $i + 1)
+	done
+	# rm $TMPFILE
+else
+	echo "Cannot read $DAEMON" >&2
+	exit -1
+fi
+
