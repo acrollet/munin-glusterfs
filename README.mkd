@@ -1,10 +1,53 @@
-# About
+About
+=====
 
-This is the first draft of a munin [1] plugin for glusterfs. [2]
+This is the first draft of a munin [1] plugin for glusterfs. [2] It's a bit of
+a hack, because the only way to get stats out of glusterfs is to add a debug
+translator, set an extended attribute, and scan the server's logfile for output.
+A /proc or executable utility interface to these data would be *really* nice to
+have. (Are you listening, gluster folks?)
 
+Pre-requisites
+==============
 
+Because of the way the io-stats debug translator* [3] works, one must mount
+the filesystem on the server as a client. The underlying filesystem must be
+mounted with the user_xattr option, and the setfattr utility must be available 
+in your standard path. Finally, you must add the io-stats debug translator to
+your server's configuration. Ex:
 
+volume io-stats
+        type debug/io-stats
+        option dump-fd-stats true
+        subvolumes brick
+end-volume
 
+Configuration
+=============
+Place the glusterfsd file in /etc/munin/plugins, and edit the variables at the beginning
+of the file. Be sure that CLIENTFS is set to the path of the gluster filesystem where
+mounted as a client, and that LOGFILE is set to the full path of the server logfile. (The 
+default should be correct for the debian packaged version of glusterfs) Then, restart 
+munin-node, and the graph should be configured automatically.
+
+Troubleshooting
+===============
+The standard directions on the munin wiki [4] will probably be of help. If stats are not
+getting output with a 'list' command, try manually running the setfattr command:
+
+setfattr -n trusted.io-stats-dump /path/to/glusterfs
+
+If that gives an error, you need to enable extended attributes for the underlying 
+filesystem, or install the attr utilities. (or maybe both) If that does not give an 
+error, check the server log file for output. If there is none, check that your translators
+are configured properly. (Be sure that they "chain" properly)
+
+Footnotes
+---------
+* Unfortunately, the io-stats translator is not documented on the wiki [5] at this time.
 
 [1]: http://munin-monitoring.org/
 [2]: http://www.gluster.org/
+[3]: http://git.gluster.com/?p=glusterfs.git;a=tree;f=xlators/debug/io-stats/src;hb=HEAD
+[4]: http://munin-monitoring.org/wiki/FAQ_no_graphs
+[5]: http://www.gluster.com/community/documentation/index.php/Translators
