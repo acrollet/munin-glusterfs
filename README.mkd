@@ -1,5 +1,4 @@
-About
-=====
+# About
 
 This is the first draft of a munin [1] plugin for glusterfs. [2] It's a bit of
 a hack, because the only way to get stats out of glusterfs is to add a debug
@@ -7,8 +6,7 @@ translator, set an extended attribute, and scan the server's logfile for output.
 A /proc or executable utility interface to these data would be *really* nice to
 have. (Are you listening, gluster folks?)
 
-Pre-requisites
-==============
+# Pre-requisites
 
 Because of the way the io-stats debug translator* [3] works, one must mount
 the filesystem on the server as a client. The underlying filesystem must be
@@ -22,16 +20,14 @@ volume io-stats
         subvolumes brick
 end-volume
 
-Configuration
-=============
+# Configuration
 Place the glusterfsd file in /etc/munin/plugins, and edit the variables at the beginning
 of the file. Be sure that CLIENTFS is set to the path of the gluster filesystem where
 mounted as a client, and that LOGFILE is set to the full path of the server logfile. (The 
 default should be correct for the debian packaged version of glusterfs) Then, restart 
 munin-node, and the graph should be configured automatically.
 
-Troubleshooting
-===============
+# Troubleshooting
 The standard directions on the munin wiki [4] will probably be of help. If stats are not
 getting output with a 'list' command, try manually running the setfattr command:
 
@@ -42,8 +38,7 @@ filesystem, or install the attr utilities. (or maybe both) If that does not give
 error, check the server log file for output. If there is none, check that your translators
 are configured properly. (Be sure that they "chain" properly)
 
-Footnotes
----------
+## Footnotes
 * Unfortunately, the io-stats translator is not documented on the wiki [5] at this time.
 
 [1]: http://munin-monitoring.org/
