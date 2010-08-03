@@ -14,11 +14,11 @@ mounted with the user_xattr option, and the setfattr utility must be available
 in your standard path. Finally, you must add the io-stats debug translator to
 your server's configuration. Ex:
 
-volume io-stats
-        type debug/io-stats
-        option dump-fd-stats true
-        subvolumes brick
-end-volume
+        volume io-stats
+                type debug/io-stats
+                option dump-fd-stats true
+                subvolumes brick
+        end-volume
 
 # Configuration
 Place the glusterfsd file in /etc/munin/plugins, and edit the variables at the beginning
