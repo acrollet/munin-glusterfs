@@ -40,7 +40,7 @@ then
 	setfattr -n trusted.io-stats-dump $CLIENTFS
 	# Now we immediately get the last 200 lines of the server's logfile. This should
 	# almost certainly get the stats we need.
-	tail -200 $LOGFILE > $TMPFILE
+	tail -500 $LOGFILE > $TMPFILE
 	FIRSTLINE=`sed -n '/=== Cumulative stats ===/ =' $TMPFILE|tail -1`
 	for a in $proc; do
 		echo -n "$a.value "
