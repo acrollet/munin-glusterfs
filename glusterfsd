@@ -45,9 +45,8 @@ then
 	for a in $proc; do
 		echo -n "$a.value "
 		tail -n +$FIRSTLINE $TMPFILE | grep "${a} : [0-9]\+$" | head -1 | awk '{print $NF}'
-		# i=$(expr $i + 1)
 	done
-	# rm $TMPFILE
+	rm $TMPFILE
 else
 	echo "Cannot read $DAEMON" >&2
 	exit -1
