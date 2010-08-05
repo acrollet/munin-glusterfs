@@ -4,7 +4,7 @@ This is the first draft of a munin [1] plugin for glusterfs. [2] It's a bit of
 a hack, because the only way to get stats out of glusterfs is to add a debug
 translator, set an extended attribute, and scan the server's logfile for output.
 Some kind of executable utility interface to these data would be *really* nice to
-have. (Are you listening, gluster folks?)
+have.
 
 # Pre-requisites
 
